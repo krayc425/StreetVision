@@ -10,8 +10,8 @@ import UIKit
 
 enum ZoomLevel: Int, Identifiable, CaseIterable {
 
-    case zero = 0
-    case one
+//    case zero = 0
+    case one = 1
     case two
     case three
     case four
@@ -153,8 +153,8 @@ final class GoogleMapsAPIUtils {
         debugPrint("Tile y count \(Int(imageHeight / tileHeight))")
 //        let maxX = zoomLevel == .zero ? 0 : Int(Int(imageWidth / tileWidth) / Int(pow(Double(2), Double(ZoomLevel.five.rawValue - zoomLevel.rawValue))))
 //        let maxY = zoomLevel == .zero ? 0 : Int(Int(imageHeight / tileHeight) / Int(pow(Double(2), Double(ZoomLevel.five.rawValue - zoomLevel.rawValue))))
-        let maxX = Int(pow(Double(2), Double(zoomLevel.rawValue)))
-        let maxY = Int(pow(Double(2), Double(zoomLevel.rawValue)))
+        let maxX = min(Int(imageWidth / tileWidth), Int(pow(Double(2), Double(zoomLevel.rawValue))))
+        let maxY = min(Int(imageHeight / tileHeight), Int(pow(Double(2), Double(zoomLevel.rawValue))))
         debugPrint("Fetching tiles with maxX \(maxX) maxY \(maxY)")
         do {
             guard let firstPanoID = panoIDs.panoIds.first else {
