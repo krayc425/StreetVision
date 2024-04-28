@@ -73,13 +73,13 @@ struct SearchView: View {
             guard let searchResult = searchResultStore.searchResult else {
                 return
             }
-            fetchGoogleMapData(searchResult: searchResult)
+            fetchImageAndUpdateTextureResource(searchResult: searchResult)
         }
         .onChange(of: searchResultStore.searchResult) { oldValue, newValue in
             guard let newValue else {
                 return
             }
-            fetchGoogleMapData(searchResult: newValue)
+            fetchImageAndUpdateTextureResource(searchResult: newValue)
         }
     }
 
@@ -91,31 +91,16 @@ struct SearchView: View {
         }
     }
 
-    private func fetchGoogleMapData(searchResult: SearchResult) {
+    private func fetchImageAndUpdateTextureResource(searchResult: SearchResult) {
         Task {
-            guard let session = await utils.fetchSessionToken(),
-                let panoIDs = await utils.fetchPanoIDs(
-                    latitude: searchResult.location.latitude,
-                    longitude: searchResult.location.longitude,
-                    session: session),
-                let metadata = await utils.fetchMetadata(session: session, panoIDs: panoIDs) else {
-                textureResourceStore.updateTextureResource(nil)
-                return
-            }
-            let tiles = await utils.fetchTiles(metadata: metadata, session: session, panoIDs: panoIDs, zoomLevel: currentZoomLevel)
-            guard let finalImage = ImageMergeUtils.combine(metadata: metadata, tiles: tiles) else {
-                textureResourceStore.updateTextureResource(nil)
-                return
-            }
-            let fileURL = FileUtils.cacheDirectoryURL.appendingPathComponent(UUID().uuidString).appendingPathExtension(for: .jpeg)
-            debugPrint("Writing to URL \(fileURL)")
-            guard let data = finalImage.jpegData(compressionQuality: 1.0) else {
-                debugPrint("Can't generate jpeg data from image")
+            guard let finalImageData = await utils.fetchPanoramaImageData(searchResult: searchResult, zoomLevel: currentZoomLevel) else {
                 textureResourceStore.updateTextureResource(nil)
                 return
             }
             do {
-                try data.write(to: fileURL)
+                let fileURL = FileUtils.cacheDirectoryURL.appendingPathComponent(UUID().uuidString).appendingPathExtension(for: .jpeg)
+                debugPrint("Writing image to URL \(fileURL)")
+                try finalImageData.write(to: fileURL)
                 textureResourceStore.updateTextureResource(try await TextureResource(contentsOf: fileURL))
             } catch let error {
                 debugPrint("Write image error \(error.localizedDescription)")
