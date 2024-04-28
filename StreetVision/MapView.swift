@@ -15,10 +15,29 @@ struct MapView: View {
     @ObservedObject private var searchResultStore = SearchResultStore.shared
 
     var body: some View {
-        Map(position: $cameraPosition) {
-            if let searchResult = searchResultStore.searchResult {
-                Marker(searchResult.title, coordinate: searchResult.location)
+        MapReader { proxy in
+            Map(position: $cameraPosition) {
+                if let searchResult = searchResultStore.searchResult {
+                    Marker(searchResult.title, coordinate: searchResult.location)
+                }
             }
+            .onTapGesture { screenCoordinate in
+                let selectedLocation = proxy.convert(screenCoordinate, from: .local)
+                if let selectedLocation {
+                    debugPrint("Selected \(selectedLocation.latitude), \(selectedLocation.longitude)")
+                    searchResultStore.updateSearchResult(SearchResult(
+                        title: "\(selectedLocation.latitude), \(selectedLocation.longitude)",
+                        location: selectedLocation))
+                }
+            }
+        }
+        .overlay(alignment: .bottomTrailing) {
+            Button {
+                searchResultStore.updateSearchResult(nil)
+            } label: {
+                Text("Reset")
+            }
+            .padding()
         }
         .overlay(alignment: .bottom) {
             if searchResultStore.searchResult != nil {
@@ -35,10 +54,11 @@ struct MapView: View {
         }
         .onChange(of: searchResultStore.searchResult) { oldValue, newValue in
             if let newValue {
-                cameraPosition = MapCameraPosition.region(MKCoordinateRegion(center: newValue.location, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)))
+                cameraPosition = .region(MKCoordinateRegion(center: newValue.location, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)))
+            } else {
+                cameraPosition = .automatic
             }
         }
-        .ignoresSafeArea()
     }
 
 }

@@ -71,9 +71,7 @@ struct StreetVisionApp: App {
                 windowScene.requestGeometryUpdate(geometryRequest)
             }
             .onChange(of: textureResourceStore.textureResource, initial: true) { oldValue, newValue in
-                if newValue != nil {
-                    showImmersiveSpace = true
-                }
+                showImmersiveSpace = newValue != nil
             }
             .onChange(of: showImmersiveSpace, initial: true) { oldValue, newValue in
                 Task {

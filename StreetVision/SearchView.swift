@@ -20,7 +20,7 @@ class SearchResultStore: NSObject, ObservableObject {
 
     @Published private(set) var searchResult: SearchResult?
 
-    func updateSearchResult(_ searchResult: SearchResult) {
+    func updateSearchResult(_ searchResult: SearchResult?) {
         self.searchResult = searchResult
     }
 
@@ -29,7 +29,7 @@ class SearchResultStore: NSObject, ObservableObject {
 struct SearchView: View {
 
     @Binding var currentZoomLevel: ZoomLevel
-    @State private var locationService = LocationUtils()
+    @State private var locationUtils = LocationUtils.shared
     @State private var position: MapCameraPosition = .automatic
     @State private var searchResults: [SearchResult] = []
     @State private var searchTerm: String = ""
@@ -37,36 +37,40 @@ struct SearchView: View {
     @ObservedObject private var textureResourceStore = TextureResourceStore.shared
 
     var body: some View {
-        List {
-            TextField("Search", text: $searchTerm)
-                .autocorrectionDisabled()
-                .onSubmit {
-                    Task {
-                        searchResults = (try? await locationService.search(with: searchTerm)) ?? []
+        Form {
+            Section {
+                TextField("Search", text: $searchTerm)
+                    .autocorrectionDisabled()
+                    .onSubmit {
+                        Task {
+                            searchResults = (try? await locationUtils.search(with: searchTerm)) ?? []
+                        }
                     }
-                }
-            let completions = locationService.completions
+            }
+            let completions = locationUtils.completions
             if completions.isEmpty {
                 ContentUnavailableView("Start a search", systemImage: "location.magnifyingglass")
             } else {
-                ForEach(completions) { completion in
-                    Button {
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                        didTapOnCompletion(completion)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(completion.title)
-                                .font(.headline)
-                            Text(completion.subTitle)
-                                .font(.body)
+                List {
+                    ForEach(completions) { completion in
+                        Button {
+                            didTapOnCompletion(completion)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(completion.title)
+                                    .font(.headline)
+                                Text(completion.subTitle)
+                                    .font(.body)
+                            }
                         }
                     }
                 }
             }
         }
+        .formStyle(.grouped)
         .navigationTitle("Street Vision")
         .onChange(of: searchTerm) {
-            locationService.update(queryFragment: searchTerm)
+            locationUtils.update(queryFragment: searchTerm)
         }
         .onChange(of: currentZoomLevel) {
             guard let searchResult = searchResultStore.searchResult else {
@@ -76,17 +80,17 @@ struct SearchView: View {
             fetchImageAndUpdateTextureResource(searchResult: searchResult)
         }
         .onChange(of: searchResultStore.searchResult) { oldValue, newValue in
-            guard let newValue else {
-                return
-            }
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             textureResourceStore.updateTextureResource(nil)
-            fetchImageAndUpdateTextureResource(searchResult: newValue)
+            if let newValue {
+                fetchImageAndUpdateTextureResource(searchResult: newValue)
+            }
         }
     }
 
     private func didTapOnCompletion(_ completion: SearchCompletions) {
         Task {
-            if let singleLocation = try? await locationService.search(with: "\(completion.title) \(completion.subTitle)").first {
+            if let singleLocation = try? await locationUtils.search(with: "\(completion.title) \(completion.subTitle)").first {
                 searchResultStore.updateSearchResult(singleLocation)
             }
         }

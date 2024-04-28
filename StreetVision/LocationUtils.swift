@@ -39,7 +39,9 @@ class LocationUtils: NSObject, ObservableObject, MKLocalSearchCompleterDelegate 
     private let completer: MKLocalSearchCompleter
     @Published var completions = [SearchCompletions]()
 
-    override init() {
+    static let shared = LocationUtils()
+
+    private override init() {
         let completer = MKLocalSearchCompleter()
         completer.resultTypes = [.address, .pointOfInterest]
         self.completer = completer
