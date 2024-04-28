@@ -26,22 +26,6 @@ class SearchResultStore: NSObject, ObservableObject {
 
 }
 
-@MainActor
-class TextureResourceStore: NSObject, ObservableObject {
-
-    static let shared = TextureResourceStore()
-
-    private override init() {
-
-    }
-
-    @Published private(set) var textureResource: TextureResource?
-
-    func updateTextureResource(_ textureResource: TextureResource?) {
-        self.textureResource = textureResource
-    }
-}
-
 struct SearchView: View {
 
     private let utils = GoogleMapsAPIUtils()
@@ -119,8 +103,11 @@ struct SearchView: View {
                 return
             }
             let tiles = await utils.fetchTiles(metadata: metadata, session: session, panoIDs: panoIDs, zoomLevel: currentZoomLevel)
-            let finalImage = ImageMergeUtils.combine(metadata: metadata, zoomLevel: currentZoomLevel, tiles: tiles)
-            let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension(for: .jpeg)
+            guard let finalImage = ImageMergeUtils.combine(metadata: metadata, tiles: tiles) else {
+                textureResourceStore.updateTextureResource(nil)
+                return
+            }
+            let fileURL = FileUtils.cacheDirectoryURL.appendingPathComponent(UUID().uuidString).appendingPathExtension(for: .jpeg)
             debugPrint("Writing to URL \(fileURL)")
             guard let data = finalImage.jpegData(compressionQuality: 1.0) else {
                 debugPrint("Can't generate jpeg data from image")

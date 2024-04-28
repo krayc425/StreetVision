@@ -16,6 +16,7 @@
 		EF752C2A2BDCE163007BC487 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF752C292BDCE163007BC487 /* ImmersiveView.swift */; };
 		EF752C2E2BDCE167007BC487 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF752C2D2BDCE167007BC487 /* Assets.xcassets */; };
 		EF752C392BDCE366007BC487 /* GoogleMapsAPIUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF752C382BDCE366007BC487 /* GoogleMapsAPIUtils.swift */; };
+		EFD1EEDD2BDDC23900243410 /* FileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD1EEDC2BDDC23900243410 /* FileUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		EF752C2D2BDCE167007BC487 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EF752C322BDCE167007BC487 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EF752C382BDCE366007BC487 /* GoogleMapsAPIUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsAPIUtils.swift; sourceTree = "<group>"; };
+		EFD1EEDC2BDDC23900243410 /* FileUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				EF426DEF2BDD00A9003D74EA /* ImageMergeUtils.swift */,
 				EF426DF12BDD4B0F003D74EA /* LocationUtils.swift */,
 				EF426DF52BDD9E12003D74EA /* GoogleMapsAPIKey.swift */,
+				EFD1EEDC2BDDC23900243410 /* FileUtils.swift */,
 			);
 			path = StreetVision;
 			sourceTree = "<group>";
@@ -147,6 +150,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFD1EEDD2BDDC23900243410 /* FileUtils.swift in Sources */,
 				EF426DF42BDD979D003D74EA /* MapView.swift in Sources */,
 				EF752C392BDCE366007BC487 /* GoogleMapsAPIUtils.swift in Sources */,
 				EF426DF62BDD9E12003D74EA /* GoogleMapsAPIKey.swift in Sources */,

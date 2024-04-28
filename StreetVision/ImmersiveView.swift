@@ -8,6 +8,22 @@
 import RealityKit
 import SwiftUI
 
+@MainActor
+class TextureResourceStore: NSObject, ObservableObject {
+
+    static let shared = TextureResourceStore()
+
+    private override init() {
+
+    }
+
+    @Published private(set) var textureResource: TextureResource?
+
+    func updateTextureResource(_ textureResource: TextureResource?) {
+        self.textureResource = textureResource
+    }
+}
+
 struct ImmersiveView: View {
 
     @State private var textureResource: TextureResource? = TextureResourceStore.shared.textureResource

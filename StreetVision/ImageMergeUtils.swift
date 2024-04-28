@@ -16,11 +16,15 @@ struct TileResult {
 
 final class ImageMergeUtils {
 
-    class func combine(metadata: GMapsMetadataResponse, zoomLevel: ZoomLevel, tiles: [TileResult]) -> UIImage {
+    class func combine(metadata: GMapsMetadataResponse, tiles: [TileResult]) -> UIImage? {
+        guard !tiles.isEmpty else {
+            return nil
+        }
         let tileHeight = metadata.tileHeight
         let tileWidth = metadata.tileWidth
-        let maxX = tiles.map { $0.x }.max()!
-        let maxY = tiles.map { $0.y }.max()!
+        guard let maxX = tiles.map({ $0.x }).max(), let maxY = tiles.map({ $0.y }).max() else {
+            return nil
+        }
         debugPrint("Generating image maxX \(maxX) maxY \(maxY)")
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: tileWidth * maxX, height: tileHeight * maxY))
         return renderer.image { context in
