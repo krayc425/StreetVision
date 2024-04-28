@@ -57,7 +57,7 @@ final class GoogleMapsAPIUtils {
 
     // MARK: - Public
 
-    func fetchPanoramaImageData(searchResult: SearchResult, zoomLevel: ZoomLevel) async -> Data? {
+    static func fetchPanoramaImageData(searchResult: SearchResult, zoomLevel: ZoomLevel) async -> Data? {
         guard let session = await fetchSessionToken(),
             let panoIDs = await fetchPanoIDs(
                 latitude: searchResult.location.latitude,
@@ -67,13 +67,13 @@ final class GoogleMapsAPIUtils {
             return nil
         }
         let tiles = await fetchTiles(metadata: metadata, session: session, panoIDs: panoIDs, zoomLevel: zoomLevel)
-        return ImageMergeUtils.combine(metadata: metadata, tiles: tiles)?.jpegData(compressionQuality: 1.0)
+        return ImageUtils.combine(metadata: metadata, zoomLevel: zoomLevel, tiles: tiles)?.jpegData(compressionQuality: 1.0)
     }
 
     // MARK: - Private
 
     /// https://developers.google.com/maps/documentation/tile/session_tokens
-    private func fetchSessionToken() async -> GMapsSessionResponse? {
+    private static func fetchSessionToken() async -> GMapsSessionResponse? {
         do {
             guard var components = URLComponents(string: "https://tile.googleapis.com/v1/createSession") else {
                 throw GMapsAPIUtilsError.invalidURLComponents
@@ -102,7 +102,7 @@ final class GoogleMapsAPIUtils {
     }
 
     /// https://developers.google.com/maps/documentation/tile/streetview#street_view_image_tiles
-    private func fetchPanoIDs(latitude: Double, longitude: Double, session: GMapsSessionResponse) async -> GMapsPanoIDsResponse? {
+    private static func fetchPanoIDs(latitude: Double, longitude: Double, session: GMapsSessionResponse) async -> GMapsPanoIDsResponse? {
         debugPrint("Fetching panoIDs with session ID \(session.session)")
         do {
             guard var components = URLComponents(string: "https://tile.googleapis.com/v1/streetview/panoIds") else {
@@ -133,7 +133,7 @@ final class GoogleMapsAPIUtils {
         }
     }
 
-    private func fetchMetadata(session: GMapsSessionResponse, panoIDs: GMapsPanoIDsResponse) async -> GMapsMetadataResponse? {
+    private static func fetchMetadata(session: GMapsSessionResponse, panoIDs: GMapsPanoIDsResponse) async -> GMapsMetadataResponse? {
         do {
             guard let firstPanoID = panoIDs.panoIds.first, !firstPanoID.isEmpty else {
                 throw GMapsAPIUtilsError.invalidPanoID
@@ -161,16 +161,8 @@ final class GoogleMapsAPIUtils {
         }
     }
 
-    private func fetchTiles(metadata: GMapsMetadataResponse, session: GMapsSessionResponse, panoIDs: GMapsPanoIDsResponse, zoomLevel: ZoomLevel) async -> [TileResult] {
-        let imageHeight = metadata.imageHeight
-        let imageWidth = metadata.imageWidth
-        let tileHeight = metadata.tileHeight
-        let tileWidth = metadata.tileWidth
-        debugPrint("Tile x count \(Int(imageWidth / tileWidth))")
-        debugPrint("Tile y count \(Int(imageHeight / tileHeight))")
-        /// https://www.linkedin.com/pulse/obtaining-google-street-view-spherical-images-tutorial-william-pierce/
-        let maxX = Int(Int(imageWidth / tileWidth) / Int(pow(Double(2), Double(ZoomLevel.five.rawValue - zoomLevel.rawValue))))
-        let maxY = Int(Int(imageHeight / tileHeight) / Int(pow(Double(2), Double(ZoomLevel.five.rawValue - zoomLevel.rawValue))))
+    private static func fetchTiles(metadata: GMapsMetadataResponse, session: GMapsSessionResponse, panoIDs: GMapsPanoIDsResponse, zoomLevel: ZoomLevel) async -> [TileResult] {
+        let (maxX, maxY) = ImageUtils.canvasSize(metadata: metadata, zoomLevel: zoomLevel)
         debugPrint("Fetching tiles with maxX \(maxX) maxY \(maxY)")
         do {
             guard let firstPanoID = panoIDs.panoIds.first else {

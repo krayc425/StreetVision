@@ -28,7 +28,6 @@ class SearchResultStore: NSObject, ObservableObject {
 
 struct SearchView: View {
 
-    private let utils = GoogleMapsAPIUtils()
     @Binding var currentZoomLevel: ZoomLevel
     @State private var locationService = LocationUtils()
     @State private var position: MapCameraPosition = .automatic
@@ -73,12 +72,14 @@ struct SearchView: View {
             guard let searchResult = searchResultStore.searchResult else {
                 return
             }
+            textureResourceStore.updateTextureResource(nil)
             fetchImageAndUpdateTextureResource(searchResult: searchResult)
         }
         .onChange(of: searchResultStore.searchResult) { oldValue, newValue in
             guard let newValue else {
                 return
             }
+            textureResourceStore.updateTextureResource(nil)
             fetchImageAndUpdateTextureResource(searchResult: newValue)
         }
     }
@@ -93,7 +94,7 @@ struct SearchView: View {
 
     private func fetchImageAndUpdateTextureResource(searchResult: SearchResult) {
         Task {
-            guard let finalImageData = await utils.fetchPanoramaImageData(searchResult: searchResult, zoomLevel: currentZoomLevel) else {
+            guard let finalImageData = await GoogleMapsAPIUtils.fetchPanoramaImageData(searchResult: searchResult, zoomLevel: currentZoomLevel) else {
                 textureResourceStore.updateTextureResource(nil)
                 return
             }

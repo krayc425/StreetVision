@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EF426DF02BDD00A9003D74EA /* ImageMergeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF426DEF2BDD00A9003D74EA /* ImageMergeUtils.swift */; };
+		EF426DF02BDD00A9003D74EA /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF426DEF2BDD00A9003D74EA /* ImageUtils.swift */; };
 		EF426DF22BDD4B0F003D74EA /* LocationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF426DF12BDD4B0F003D74EA /* LocationUtils.swift */; };
 		EF426DF42BDD979D003D74EA /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF426DF32BDD979D003D74EA /* MapView.swift */; };
 		EF426DF62BDD9E12003D74EA /* GoogleMapsAPIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF426DF52BDD9E12003D74EA /* GoogleMapsAPIKey.swift */; };
@@ -20,7 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		EF426DEF2BDD00A9003D74EA /* ImageMergeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMergeUtils.swift; sourceTree = "<group>"; };
+		EF426DEF2BDD00A9003D74EA /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		EF426DF12BDD4B0F003D74EA /* LocationUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationUtils.swift; sourceTree = "<group>"; };
 		EF426DF32BDD979D003D74EA /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		EF426DF52BDD9E12003D74EA /* GoogleMapsAPIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsAPIKey.swift; sourceTree = "<group>"; };
@@ -71,7 +71,7 @@
 				EF752C2D2BDCE167007BC487 /* Assets.xcassets */,
 				EF752C322BDCE167007BC487 /* Info.plist */,
 				EF752C382BDCE366007BC487 /* GoogleMapsAPIUtils.swift */,
-				EF426DEF2BDD00A9003D74EA /* ImageMergeUtils.swift */,
+				EF426DEF2BDD00A9003D74EA /* ImageUtils.swift */,
 				EF426DF12BDD4B0F003D74EA /* LocationUtils.swift */,
 				EF426DF52BDD9E12003D74EA /* GoogleMapsAPIKey.swift */,
 				EFD1EEDC2BDDC23900243410 /* FileUtils.swift */,
@@ -155,7 +155,7 @@
 				EF752C392BDCE366007BC487 /* GoogleMapsAPIUtils.swift in Sources */,
 				EF426DF62BDD9E12003D74EA /* GoogleMapsAPIKey.swift in Sources */,
 				EF752C282BDCE163007BC487 /* SearchView.swift in Sources */,
-				EF426DF02BDD00A9003D74EA /* ImageMergeUtils.swift in Sources */,
+				EF426DF02BDD00A9003D74EA /* ImageUtils.swift in Sources */,
 				EF752C262BDCE163007BC487 /* StreetVisionApp.swift in Sources */,
 				EF426DF22BDD4B0F003D74EA /* LocationUtils.swift in Sources */,
 				EF752C2A2BDCE163007BC487 /* ImmersiveView.swift in Sources */,
