@@ -102,7 +102,7 @@ struct SearchView: View {
     private func fetchImageAndUpdateTextureResource(searchResult: SearchResult) {
         Task {
             tilesLoadingStatus = .loading
-            guard let finalImageData = await GoogleMapsAPIUtils.fetchPanoramaImageData(searchResult: searchResult, zoomLevel: currentZoomLevel) else {
+            guard let (finalImageData, metadata) = await GoogleMapsAPIUtils.fetchPanoramaImageData(searchResult: searchResult, zoomLevel: currentZoomLevel), let finalImageData else {
                 textureResourceStore.updateTextureResource(nil)
                 tilesLoadingStatus = .failed
                 return
@@ -112,7 +112,10 @@ struct SearchView: View {
                 debugPrint("Writing image to URL \(fileURL)")
                 try finalImageData.write(to: fileURL)
                 tilesLoadingStatus = .success
-                textureResourceStore.updateTextureResource(try await TextureResource(contentsOf: fileURL))
+                textureResourceStore.updateTextureResource(TextureResourceModel(
+                    textureResource: try await TextureResource(contentsOf: fileURL),
+                    heading: metadata.heading,
+                    links: metadata.links))
             } catch let error {
                 tilesLoadingStatus = .failed
                 debugPrint("Write image error \(error.localizedDescription)")

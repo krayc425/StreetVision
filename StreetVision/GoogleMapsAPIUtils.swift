@@ -44,12 +44,20 @@ struct GMapsPanoIDsResponse: Decodable {
 }
 
 struct GMapsMetadataResponse: Decodable {
+
+    struct Links: Decodable {
+        let panoId: String
+        let heading: Double
+    }
+
     let imageHeight: Int
     let imageWidth: Int
     let tileHeight: Int
     let tileWidth: Int
+    let heading: Double
     let date: String
     let copyright: String
+    let links: [Links]
 }
 
 enum GMapsAPIUtilsError: Error {
@@ -62,7 +70,7 @@ final class GoogleMapsAPIUtils {
 
     // MARK: - Public
 
-    static func fetchPanoramaImageData(searchResult: SearchResult, zoomLevel: ZoomLevel) async -> Data? {
+    static func fetchPanoramaImageData(searchResult: SearchResult, zoomLevel: ZoomLevel) async -> (Data?, GMapsMetadataResponse)? {
         guard let session = await fetchSessionToken(),
             let panoIDs = await fetchPanoIDs(
                 latitude: searchResult.location.latitude,
@@ -72,7 +80,7 @@ final class GoogleMapsAPIUtils {
             return nil
         }
         let tiles = await fetchTiles(metadata: metadata, session: session, panoIDs: panoIDs, zoomLevel: zoomLevel)
-        return ImageUtils.combine(metadata: metadata, zoomLevel: zoomLevel, tiles: tiles)?.jpegData(compressionQuality: 1.0)
+        return (ImageUtils.combine(metadata: metadata, zoomLevel: zoomLevel, tiles: tiles)?.jpegData(compressionQuality: 1.0), metadata)
     }
 
     // MARK: - Private
