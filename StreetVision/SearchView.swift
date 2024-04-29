@@ -29,6 +29,7 @@ class SearchResultStore: NSObject, ObservableObject {
 struct SearchView: View {
 
     @Binding var currentZoomLevel: ZoomLevel
+    @Binding var tilesLoadingStatus: TilesLoadingStatus
     @State private var locationUtils = LocationUtils.shared
     @State private var position: MapCameraPosition = .automatic
     @State private var searchResults: [SearchResult] = []
@@ -84,6 +85,8 @@ struct SearchView: View {
             textureResourceStore.updateTextureResource(nil)
             if let newValue {
                 fetchImageAndUpdateTextureResource(searchResult: newValue)
+            } else {
+                tilesLoadingStatus = .none
             }
         }
     }
@@ -98,16 +101,20 @@ struct SearchView: View {
 
     private func fetchImageAndUpdateTextureResource(searchResult: SearchResult) {
         Task {
+            tilesLoadingStatus = .loading
             guard let finalImageData = await GoogleMapsAPIUtils.fetchPanoramaImageData(searchResult: searchResult, zoomLevel: currentZoomLevel) else {
                 textureResourceStore.updateTextureResource(nil)
+                tilesLoadingStatus = .failed
                 return
             }
             do {
                 let fileURL = FileUtils.cacheDirectoryURL.appendingPathComponent(UUID().uuidString).appendingPathExtension(for: .jpeg)
                 debugPrint("Writing image to URL \(fileURL)")
                 try finalImageData.write(to: fileURL)
+                tilesLoadingStatus = .success
                 textureResourceStore.updateTextureResource(try await TextureResource(contentsOf: fileURL))
             } catch let error {
+                tilesLoadingStatus = .failed
                 debugPrint("Write image error \(error.localizedDescription)")
                 textureResourceStore.updateTextureResource(nil)
             }

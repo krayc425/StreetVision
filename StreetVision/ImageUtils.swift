@@ -9,9 +9,11 @@ import Foundation
 import UIKit
 
 struct TileResult {
+
     let x: Int
     let y: Int
     let image: UIImage
+
 }
 
 final class ImageUtils {
@@ -39,8 +41,8 @@ final class ImageUtils {
         let tileHeight = metadata.tileHeight
         let tileWidth = metadata.tileWidth
         debugPrint("Calculating canvs size, tile x count \(Int(imageWidth / tileWidth)), tile y count \(Int(imageHeight / tileHeight))")
-        let maxX = Int(Int(imageWidth / tileWidth) / Int(pow(Double(2), Double(ZoomLevel.five.rawValue - zoomLevel.rawValue))))
-        let maxY = Int(Int(imageHeight / tileHeight) / Int(pow(Double(2), Double(ZoomLevel.five.rawValue - zoomLevel.rawValue))))
+        let maxX = Int(Int(imageWidth / tileWidth) / Int(pow(Double(2), Double(5 - zoomLevel.rawValue))))
+        let maxY = Int(Int(imageHeight / tileHeight) / Int(pow(Double(2), Double(5 - zoomLevel.rawValue))))
         return (maxX, maxY)
     }
 

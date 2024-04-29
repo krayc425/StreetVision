@@ -8,9 +8,19 @@
 import MapKit
 import SwiftUI
 
+enum TilesLoadingStatus: Equatable {
+
+    case success
+    case loading
+    case failed
+    case none
+
+}
+
 struct MapView: View {
 
     @Binding var showingImmersiveSpace: Bool
+    @Binding var tilesLoadingStatus: TilesLoadingStatus
     @State private var cameraPosition: MapCameraPosition = .automatic
     @ObservedObject private var searchResultStore = SearchResultStore.shared
 
@@ -31,26 +41,44 @@ struct MapView: View {
                 }
             }
         }
-        .overlay(alignment: .bottomTrailing) {
-            Button {
-                searchResultStore.updateSearchResult(nil)
-            } label: {
-                Text("Reset")
-            }
-            .padding()
-        }
-        .overlay(alignment: .bottom) {
+        .overlay(alignment: .bottomLeading) {
             if searchResultStore.searchResult != nil {
                 Button {
-                    showingImmersiveSpace.toggle()
+                    searchResultStore.updateSearchResult(nil)
                 } label: {
-                    HStack {
-                        Image(systemName: showingImmersiveSpace ? "visionpro.slash" : "visionpro")
-                        Text(showingImmersiveSpace ? "Close Immersive Space" : "Open Immersive Space")
-                    }
+                    Text("Reset")
                 }
                 .padding()
             }
+        }
+        .overlay(alignment: .bottom) {
+            Group {
+                switch tilesLoadingStatus {
+                    case .success:
+                        Button {
+                            showingImmersiveSpace.toggle()
+                        } label: {
+                            HStack {
+                                Image(systemName: showingImmersiveSpace ? "visionpro.slash" : "visionpro")
+                                Text(showingImmersiveSpace ? "Close Immersive Space" : "Open Immersive Space")
+                            }
+                        }
+                    case .loading:
+                        ProgressView()
+                            .padding()
+                            .background(.background)
+                            .clipShape(Circle())
+                    case .none:
+                        EmptyView()
+                    case .failed:
+                        Text("No street view available")
+                            .font(.headline)
+                            .padding()
+                            .background(.background)
+                            .clipShape(Capsule())
+                }
+            }
+            .padding()
         }
         .onChange(of: searchResultStore.searchResult) { oldValue, newValue in
             if let newValue {

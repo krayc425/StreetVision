@@ -11,6 +11,7 @@ import SwiftUI
 struct StreetVisionApp: App {
 
     @State private var showImmersiveSpace = false
+    @State private var tilesLoadingStatus: TilesLoadingStatus = .none
     @State private var currentZoomLevel: ZoomLevel = .three
     @State private var cacheSizeString: String = FileUtils.cacheSizeString()
     @ObservedObject private var textureResourceStore = TextureResourceStore.shared
@@ -20,7 +21,7 @@ struct StreetVisionApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationSplitView {
-                SearchView(currentZoomLevel: $currentZoomLevel)
+                SearchView(currentZoomLevel: $currentZoomLevel, tilesLoadingStatus: $tilesLoadingStatus)
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
                             Menu {
@@ -61,7 +62,7 @@ struct StreetVisionApp: App {
                         }
                     }
             } detail: {
-                MapView(showingImmersiveSpace: $showImmersiveSpace)
+                MapView(showingImmersiveSpace: $showImmersiveSpace, tilesLoadingStatus: $tilesLoadingStatus)
             }
             .onAppear {
                 guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {

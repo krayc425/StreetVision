@@ -10,18 +10,23 @@ import UIKit
 
 enum ZoomLevel: Int, Identifiable, CaseIterable {
 
-    case one = 1
-    case two
+    case two = 2
     case three
     case four
-    case five
 
     var id: Int {
         return rawValue
     }
 
     var displayName: String {
-        return rawValue.formatted(.number)
+        switch self {
+            case .two:
+                return "Low"
+            case .three:
+                return "Medium"
+            case .four:
+                return "High"
+        }
     }
 
 }
