@@ -32,15 +32,19 @@ enum ZoomLevel: Int, Identifiable, CaseIterable {
 }
 
 struct GMapsSessionResponse: Decodable {
+
     let session: String
     let expiry: String
     let tileWidth: Int
     let tileHeight: Int
     let imageFormat: String
+
 }
 
 struct GMapsPanoIDsResponse: Decodable {
+
     let panoIds: [String]
+
 }
 
 struct GMapsMetadataResponse: Decodable {
@@ -61,9 +65,11 @@ struct GMapsMetadataResponse: Decodable {
 }
 
 enum GMapsAPIUtilsError: Error {
+
     case invalidURLComponents
     case invalidURL
     case invalidPanoID
+
 }
 
 final class GoogleMapsAPIUtils {

@@ -41,16 +41,6 @@ struct MapView: View {
                 }
             }
         }
-        .overlay(alignment: .bottomLeading) {
-            if searchResultStore.searchResult != nil {
-                Button {
-                    searchResultStore.updateSearchResult(nil)
-                } label: {
-                    Text("Reset")
-                }
-                .padding()
-            }
-        }
         .overlay(alignment: .bottom) {
             Group {
                 switch tilesLoadingStatus {

@@ -53,25 +53,16 @@ struct ImmersiveView: View {
                     rootEntity.scale = SIMD3<Float>(x: 1, y: 1, z: -1)
                     rootEntity.orientation = simd_quatf(angle: -Float.pi / 2.0, axis: SIMD3<Float>(0, 1, 0))
                     content.add(rootEntity)
-                    for link in textureResourceModel.links {
-                        let box = ModelEntity(mesh: .generateBox(size: 0.5), materials: [UnlitMaterial(color: .red)])
-                        let angle = Angle.degrees(link.heading)
-                        box.position.x = 5.0 * sin(Float(angle.radians) - Float.pi / 2.0)
-                        box.position.z = 5.0 * cos(Float(angle.radians) - Float.pi / 2.0)
-                        box.components.set(InputTargetComponent())
-                        box.orientation = simd_quatf(angle: Float(angle.radians) - Float.pi / 2.0, axis: SIMD3<Float>(0, 1, 0))
-                        rootEntity.addChild(box, preservingWorldTransform: true)
-                    }
                 }
             } else {
                 EmptyView()
             }
         }
         .onChange(of: searchResultStore.searchResult, initial: true) { oldValue, newValue in
-            self.textureResourceModel = nil
+            textureResourceModel = nil
         }
         .onChange(of: textureResourceStore.textureResource, initial: true) { oldValue, newValue in
-            self.textureResourceModel = newValue
+            textureResourceModel = newValue
         }
     }
 
