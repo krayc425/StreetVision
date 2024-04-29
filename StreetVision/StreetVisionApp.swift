@@ -12,7 +12,7 @@ struct StreetVisionApp: App {
 
     @State private var showImmersiveSpace = false
     @State private var tilesLoadingStatus: TilesLoadingStatus = .none
-    @State private var currentZoomLevel: ZoomLevel = .three
+    @State private var currentZoomLevel: ZoomLevel = .two
     @State private var cacheSizeString: String = FileUtils.cacheSizeString()
     @ObservedObject private var textureResourceStore = TextureResourceStore.shared
     @Environment(\.openImmersiveSpace) var openImmersiveSpace
